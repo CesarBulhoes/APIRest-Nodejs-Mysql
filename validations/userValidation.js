@@ -3,7 +3,7 @@ const {body, validationResult} = require('express-validator')
 class userValidation {
 
     getById = [
-        body('id').isInt().withMessage('ID precisa conter somente números.')
+        // body('id').isDecimal().withMessage('ID precisa conter somente números.')
     ]
 
     addUser = [

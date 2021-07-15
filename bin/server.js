@@ -1,7 +1,7 @@
 const app = require('../app');
 const http = require('http');
-const connection = require('../infrastructure/connection');
-const tables = require('../infrastructure/tables')
+const connection = require('../infrastructure/database/connection');
+const tables = require('../infrastructure/database/tables')
 const port = 80;// normalizePort(process.env.PORT || 80);
 
 const server = http.createServer(app);

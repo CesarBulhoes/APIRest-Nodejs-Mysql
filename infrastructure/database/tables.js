@@ -23,6 +23,9 @@ class Tables {
     }
 
     createFiles(){
+
+        //SETAR userId como FOREIGN KEY de Users(id)
+
         const sql = `CREATE TABLE IF NOT EXISTS files( 
         id int NOT NULL AUTO_INCREMENT,
         userId int NOT NULL,
