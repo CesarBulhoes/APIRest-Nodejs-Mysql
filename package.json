@@ -7,11 +7,16 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
+    "config": "^3.3.6",
     "consign": "^0.1.6",
     "express": "~4.16.1",
+    "express-basic-auth": "^1.2.0",
     "express-validator": "^6.12.0",
+    "fs": "0.0.1-security",
     "moment": "^2.29.1",
-    "mysql": "^2.18.1"
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.6.5",
+    "spdy": "^4.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.10"

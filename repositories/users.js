@@ -1,34 +1,50 @@
-const query = require('../infrastructure/database/queries')
+const schema = require('../infrastructure/database/schema/users')
 
 class Users {
 
+    constructor(){ 
+
+        schema.then(obj => this.schema = obj)
+    }
+
     getList(){
+        
+        return this.schema.findAll()
 
-        const sql = `SELECT * FROM users WHERE deleted = 0`
-
-        return query(sql)
     }
 
     getById(id){
 
-        const sql = `SELECT * FROM users WHERE id = ?`
-
-        return query(sql, id)
+        return this.schema.findAll({
+            where: {
+              id: id
+            }
+        })
     }
 
     add(user) {
 
-        const sql = `INSERT INTO users SET ?`
-        return query(sql, user)
+        return this.schema.create(user)
+
     }  
 
-    update(user){
-
-        const sql = `UPDATE users SET ? WHERE id = ?`
-        const userId = user.id
-       
-        return query(sql, user, userId)
+    update(id, user){
+        
+        return this.schema.update(user, {
+            where: {
+              id: id
+            }
+        })
     }
+
+    delete(id, user){
+        
+        return this.schema.destroy({
+            where: {
+              id: id
+            }
+        })
+     }
 }
 
 module.exports = new Users()

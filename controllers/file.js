@@ -1,4 +1,4 @@
-const fileModel = require('../models/file');
+const fileModel = require('../models/file') 
 
 class fileCtrl {
 
@@ -7,7 +7,7 @@ class fileCtrl {
         fileModel.getList()
         .then(list => res.status(200).send(list))
         .catch(error => res.status(400).send(error))
-    };
+    } 
     
     getById = (req, res, next) => {
 
@@ -16,7 +16,7 @@ class fileCtrl {
         fileModel.getById(id)
         .then(file => res.status(200).send(file))
         .catch(error => res.status(400).send(error))
-    };
+    } 
     
     add = (req, res, next) => {
 
@@ -27,7 +27,7 @@ class fileCtrl {
         fileModel.add(file)
         .then(file => res.status(200).send(file))
         .catch(error => res.status(400).send(error))
-    };
+    } 
     
     update = (req, res, next) => {
 
@@ -36,7 +36,7 @@ class fileCtrl {
         fileModel.update(file)
         .then(file => res.status(200).send(file))
         .catch(error => res.status(400).send(error))
-    };
+    } 
     
     delete = (req, res, next) => {
 
@@ -45,7 +45,7 @@ class fileCtrl {
         fileModel.delete(file)
         .then(file => res.status(200).send(file))
         .catch(error => res.status(400).send(error))
-    };
+    } 
 }
 
 module.exports = new fileCtrl()

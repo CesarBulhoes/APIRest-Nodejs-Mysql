@@ -1,5 +1,5 @@
 const fs = require('fs')
-const path = require('path');
+const path = require('path') 
 
 
 ///Users/cesar/OneDrive/Documentos/NodeJS-Tutorial/functions/images

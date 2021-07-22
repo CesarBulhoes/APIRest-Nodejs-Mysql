@@ -1,4 +1,3 @@
-const moment = require('moment')
 const repository = require('../repositories/users')
 
 class User {
@@ -23,32 +22,23 @@ class User {
 
         return repository.add(user)
         .then((result) => {
-            let id = result.insertId
-            user = {id, ...user}
-            return user
+            return result.dataValues
         })
     }
 
-    update(user) {
+    update(id, user) {
 
-        const updated_at = moment().format('YYYY-MM-DD HH:MM')
-        user.updated_at = updated_at
-
-        return repository.update(user)
+        return repository.update(id, user)
         .then((result) => {
-            return user
+            return result
         })
     }
 
-    delete(user) {
-        
-        const updated_at = moment().format('YYYY-MM-DD HH:MM')
-        user.updated_at = updated_at
-        user.deleted = 1
+    delete(id, user) {
 
-        return repository.update(user)
+        return repository.delete(id, user)
         .then((result) => {
-            return user
+            return result
         })
     }
 }

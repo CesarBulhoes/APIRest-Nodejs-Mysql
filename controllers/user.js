@@ -3,7 +3,7 @@ const userModel = require('../models/user')
 class userCtrl {
 
     getList = (req, res, next) => {
-
+        
         userModel.getList()
         .then(list => res.status(200).send(list))
         .catch(error => res.status(400).send(error))
@@ -29,19 +29,21 @@ class userCtrl {
     
     update = (req, res, next) => {
 
+        const id = req.params.id
         const user = req.body
-
-        userModel.update(user)
-        .then(user => res.status(200).send(user))
+        
+        userModel.update(id, user)
+        .then(result => res.status(200).send(user)) //result = 1 if updated successfully... = 0 if not found
         .catch(error => res.status(400).send(error))
     }
     
     delete = (req, res, next) => {
 
+        const id = req.params.id
         const user = req.body
 
-        userModel.delete(user, res)
-        .then(user => res.status(200).send(user))
+        userModel.delete(id, user)
+        .then(result => res.status(200).send(user)) //result = 1 if updated successfully... = 0 if not found
         .catch(error => res.status(400).send(error))
     }
 }
