@@ -1,11 +1,14 @@
 const { validationResult } = require('express-validator') 
+const IncorrectInput = require('../../errors/incorrectInput')
 
 class routeCtrl {
 
     checkErrors(req, res, next) {
         const errors = validationResult(req) 
         if (!errors.isEmpty()) {
-            return res.status(422).json({ errors: errors.array() }) 
+
+            throw new IncorrectInput(errors.array())
+            
         } else {
             return next() 
         }

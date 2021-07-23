@@ -1,4 +1,4 @@
-const repository = require('../repositories/users')
+const repository = require('../../infrastructure/repositories/users')
 
 class User {
 
@@ -34,9 +34,9 @@ class User {
         })
     }
 
-    delete(id, user) {
+    delete(id) {
 
-        return repository.delete(id, user)
+        return repository.delete(id)
         .then((result) => {
             return result
         })

@@ -1,33 +1,42 @@
-// var createError = require('http-errors')
 const express = require('express')
 const path = require('path')
 const consign = require('consign')
-const { promisify} = require('util') 
-const fs = require('fs')
-const readFile = promisify(fs.readFile)
-
+const NotFound = require('./errors/notFound')
+const NotAcceptedType = require('./errors/notAcceptedType')
+const acceptedTypes = require('./api/serializer').acceptedTypes
+const ErrorSerializer = require('./api/serializer').ErrorSerializer
+const IncorrectInput = require('./errors/incorrectInput')
 const app = express()
 
 app.use(express.static(path.resolve(__dirname, 'public')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-consign().include('routes').into(app)
+app.use((req, res, next) => {
 
+    let requiredType = req.header('Accept')
 
-// catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404))
-// })
+    if(requiredType === '*/*') requiredType = 'application/json'
+    
+    if(acceptedTypes.indexOf(requiredType) === -1) throw new NotAcceptedType(requiredType)
+    
+    res.setHeader('Content-Type', requiredType)
 
-// app.use(function(err, req, res, next) {
-//   res.locals.message = err.message
-//   res.locals.error = req.app.get('env') === 'development' ? err : {}
+    next()
+})
 
-//   res.status(err.status || 500)
-//   res.send('error')
-// })
+consign().include('api/routes').into(app)
 
-// 
+app.use((error, req, res, next) => {
+    
+    let status = (error.status || 500)
+
+    const errorSerializer = new ErrorSerializer(res.getHeader('Content-Type'))
+
+    res.status(status).send(errorSerializer.serialize(error))   
+})
+
+    // res.status(status).send(errorSerializer.serialize(error))   
+
 
 module.exports = app

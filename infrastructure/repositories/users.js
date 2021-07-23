@@ -1,4 +1,4 @@
-const schema = require('../infrastructure/database/schema/users')
+const schema = require('../database/schema/users')
 
 class Users {
 
@@ -9,7 +9,7 @@ class Users {
 
     getList(){
         
-        return this.schema.findAll()
+        return this.schema.findAll({ raw: true })
 
     }
 
@@ -18,7 +18,8 @@ class Users {
         return this.schema.findAll({
             where: {
               id: id
-            }
+            },
+            raw: true 
         })
     }
 
@@ -37,7 +38,7 @@ class Users {
         })
     }
 
-    delete(id, user){
+    delete(id){
         
         return this.schema.destroy({
             where: {

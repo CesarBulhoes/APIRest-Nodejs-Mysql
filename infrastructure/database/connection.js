@@ -9,7 +9,7 @@ const connection = new Sequelize(
     {
         host: config.get("mysql.host"),
         dialect: "mysql",
-    //    logging: false
+        logging: false
     })
     
 // mysql.createConnection(

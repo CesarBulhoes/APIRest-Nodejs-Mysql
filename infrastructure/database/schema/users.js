@@ -2,13 +2,15 @@ const Sequelize = require('sequelize')
 const connection = require('../connection')
 
 class UsersSchema {
+    
     constructor() {
         
         this.connection = connection
-        this.schema = this.createUsers()
+        this.schema = this.createTable()
+        
     }
 
-    async createUsers(){
+    async createTable(){
         
         const columns = {
             name: {
@@ -54,10 +56,6 @@ class UsersSchema {
         
         return await connection.define('user', columns, options)
     }
-
-    // async findAll(){
-    //     return await this.schema.findAll();
-    // }
 }
 
 module.exports = new UsersSchema().schema
