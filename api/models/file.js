@@ -1,12 +1,19 @@
-const moment = require('moment')
-const fileFunc = require('../infrastructure/functions/fileFunc')
-const repository = require('../repositories/files')
+const fileFunc = require('../../infrastructure/functions/fileFunc')
+const repository = require('../../infrastructure/repositories/files')
 
 class File {
 
     getList(){
         
         return repository.getList()
+        .then((result) => {
+            return result
+        })
+    }
+
+    getListByUserId(userId){
+
+        return repository.getListByUserId(userId)
         .then((result) => {
             return result
         })
@@ -19,12 +26,22 @@ class File {
             return result[0]
         })
     }
+
+    getByUserAndFileIds(id, userId){
+
+        return repository.getByUserAndFileIds(id, userId)
+        .then((result) => {
+            return result[0]
+        })
+    }
     
     add(file){
-
-        const splitedFilename = file.filename.split('.')
+        //tratar o multer aqui
+        
+        file.buffer = (file.buffer ? file.buffer : "d.png")
+        
         const timestamp = new Date().getTime().toString()
-        file.filename = [`${splitedFilename[0]}-${timestamp.slice(timestamp.length - 5, timestamp.length)}`, splitedFilename[1]].join('.')
+        file.filename = [`${timestamp.slice(timestamp.length - 5, timestamp.length)}`, 'png'].join('.')
         
         return fileFunc.uploadFile(file.buffer, file.filename)
         .then(path => {
@@ -44,17 +61,17 @@ class File {
         })
     }
 
-    update(file) {
+    update(id, file) {
 
-        return repository.update(file)
+        return repository.update(id, file)
         .then((result) => {
             return file
         })
     }
 
-    delete(file) {
+    delete(id) {
 
-        return repository.delete(file)
+        return repository.delete(id)
         .then((result) => {
             return file
         })

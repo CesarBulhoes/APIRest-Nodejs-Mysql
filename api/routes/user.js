@@ -3,6 +3,10 @@ const router = express.Router()
 const routeValidation = require('../validations/route')
 const userCtrl = require('../controllers/user') 
 const userValidation = require('../validations/user')
+const files = require('./files/file')
+
+// redirects to the FILES route
+router.use('/:userId?/files', files)
 
 // Returns all users not deleted
 router.get('/', userCtrl.getList) 
@@ -14,10 +18,10 @@ router.get('/:id', userValidation.getById, routeValidation.checkErrors, userCtrl
 router.post('/', userValidation.addUser, routeValidation.checkErrors, userCtrl.add) 
 
 // Updates a user
-router.put('/:id', userValidation.updateOrDeleteUser, routeValidation.checkErrors, userCtrl.update) 
+router.put('/:id', userValidation.updateUser, routeValidation.checkErrors, userCtrl.update) 
 
 // Sets a user as deleted
-router.delete('/:id', userValidation.updateOrDeleteUser, routeValidation.checkErrors, userCtrl.delete) 
+router.delete('/:id', userValidation.deleteUser, routeValidation.checkErrors, userCtrl.delete) 
 
 module.exports = function (app) {
     app.use('/users', router) 

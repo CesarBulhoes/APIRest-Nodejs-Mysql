@@ -1,5 +1,5 @@
 const userModel = require('../models/user')
-const notFound = require('../../errors/notFound')
+const ErrorNotFound = require('../../errors/errorNotFound')
 const UserSerializer = require('../serializer').UserSerializer
 
 class userCtrl {
@@ -13,7 +13,7 @@ class userCtrl {
             
             if( result[0] ) res.status(200).send(serializer.serialize(result))  
 
-            else throw new notFound('Usuário')
+            else throw new ErrorNotFound('Usuário')
         })
         .catch(error => next(error))
     }
@@ -30,7 +30,7 @@ class userCtrl {
             
             if( result ) res.status(200).send(serializer.serialize(result)) 
 
-            else throw new notFound('Usuário')
+            else throw new ErrorNotFound('Usuário')
         })
         .catch(error => next(error))
     }
@@ -48,17 +48,15 @@ class userCtrl {
     
     update = (req, res, next) => {
 
-        const serializer = new UserSerializer(res.getHeader('Content-Type'))
-
         const id = req.params.id
         const user = req.body
         
         userModel.update(id, user)
         .then(result => {
             
-            if( result[0] ) res.status(200).send(serializer.serialize(user)) 
+            if( result[0] ) res.status(204).end() 
 
-            else throw new notFound('Usuário')
+            else throw new ErrorNotFound('Usuário')
         
         })
         .catch(error => next(error))
@@ -66,17 +64,15 @@ class userCtrl {
     
     delete = (req, res, next) => {
 
-        const serializer = new UserSerializer(res.getHeader('Content-Type'))
-
         const id = req.params.id
         const user = req.body
 
         userModel.delete(id)
         .then(result => {
 
-            if( result ) res.status(200).send(serializer.serialize(user)) 
+            if( result ) res.status(204).end() 
 
-            else throw new notFound('Usuário')
+            else throw new ErrorNotFound('Usuário')
         })
         .catch(error => next(error))
     }

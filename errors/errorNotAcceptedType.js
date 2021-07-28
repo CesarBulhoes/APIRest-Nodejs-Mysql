@@ -1,4 +1,4 @@
-class NotAcceptedType extends Error {
+class ErrorNotAcceptedType extends Error {
     constructor(contentType){
         super()
         this.status = 406;
@@ -7,4 +7,4 @@ class NotAcceptedType extends Error {
     }
 }
 
-module.exports = NotAcceptedType
+module.exports = ErrorNotAcceptedType

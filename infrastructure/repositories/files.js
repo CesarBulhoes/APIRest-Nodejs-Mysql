@@ -1,42 +1,68 @@
-const query = require('../infrastructure/database/queries')
-
 class Files {
+
+    constructor(){ 
+
+        this.schema = require('../database/schema/files')
+    }
 
     getList(){
 
-        const sql = `SELECT * FROM files`
+        return this.schema.findAll({ raw: true })
+    }
 
-        return query(sql)
+    getListByUserId(userId){
+
+        return this.schema.findAll({
+            where: {
+              userId: userId
+            },
+            raw: true 
+        })
     }
 
     getById(id){
 
-        const sql = `SELECT * FROM files WHERE id = ?`
+        return this.schema.findAll({
+            where: {
+              id: id
+            },
+            raw: true 
+        })
+    }
 
-        return query(sql, id)
+    getByUserAndFileIds(id, userId){
+
+        return this.schema.findAll({
+            where: {
+              id: id,
+              userId: userId
+            },
+            raw: true 
+        })
     }
 
     add(file) {
 
-        const sql = `INSERT INTO files SET ?`
+        return this.schema.create(file)
 
-        return query(sql, file)
     }  
 
-    update(file){
+    update(id, file){
 
-        const sql = `UPDATE files SET ? WHERE id = ?`
-        const fileId = file.id
-       
-        return query(sql, file, fileId)
+        return this.schema.update(file, {
+            where: {
+              id: id
+            }
+        })
     }
 
-    delete(file){
+    delete(id){
 
-        const sql = `DELETE FROM files WHERE id = ?`
-        const fileId = file.id
-        
-        return query(sql, fileId)
+        return this.schema.destroy({
+            where: {
+              id: id
+            }
+        })
     }
 }
 

@@ -1,5 +1,5 @@
 const { validationResult } = require('express-validator') 
-const IncorrectInput = require('../../errors/incorrectInput')
+const ErrorIncorrectInput = require('../../errors/errorIncorrectInput')
 
 class routeCtrl {
 
@@ -7,7 +7,7 @@ class routeCtrl {
         const errors = validationResult(req) 
         if (!errors.isEmpty()) {
 
-            throw new IncorrectInput(errors.array())
+            throw new ErrorIncorrectInput(errors.array())
             
         } else {
             return next() 

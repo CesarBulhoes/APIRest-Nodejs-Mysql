@@ -1,4 +1,3 @@
-const NotAcceptedType = require('../errors/notAcceptedType')
 const jsontoxml = require('jsontoxml')
 
 class Serializer {
@@ -80,6 +79,17 @@ class UserSerializer extends Serializer{
     }
 }
 
+class FileSerializer extends Serializer{
+
+    constructor(contentType, extraColumns = []){
+        super()
+        this.publicColumns = ['id', 'userId', 'duration', 'path'].concat(extraColumns)
+        this.contentType = contentType
+        this.tagSingle = 'file'
+        this.tagPlural = 'files'
+    }
+}
+
 class ErrorSerializer extends Serializer{
     constructor(contentType, extraColumns = []){
         super()
@@ -94,6 +104,7 @@ module.exports = {
     Serializer: Serializer,
     UserSerializer: UserSerializer,
     ErrorSerializer: ErrorSerializer,
-    acceptedTypes: ['application/json', 'application/xml']
+    FileSerializer: FileSerializer,
+    acceptedTypes: ['application/json', 'application/xml', '*/*']
 }
 

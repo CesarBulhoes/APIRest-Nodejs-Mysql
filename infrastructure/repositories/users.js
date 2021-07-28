@@ -1,10 +1,8 @@
-const schema = require('../database/schema/users')
-
 class Users {
 
     constructor(){ 
 
-        schema.then(obj => this.schema = obj)
+        this.schema = require('../database/schema/users')
     }
 
     getList(){

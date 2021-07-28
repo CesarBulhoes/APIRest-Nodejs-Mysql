@@ -1,4 +1,4 @@
-class NotFound extends Error {
+class ErrorNotFound extends Error {
     constructor(name){
         super()
         this.status = 404;
@@ -7,4 +7,4 @@ class NotFound extends Error {
     }
 }
 
-module.exports = NotFound
+module.exports = ErrorNotFound
