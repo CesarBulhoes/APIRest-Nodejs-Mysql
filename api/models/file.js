@@ -3,6 +3,17 @@ const repository = require('../../infrastructure/repositories/files')
 
 class File {
 
+    constructor({id, userId, duration, path, createdAt, updatedAt, deletedAt, version}){
+        this.id = id
+        this.userId = userId
+        this.duration = duration
+        this.path = path
+        this.createdAt = createdAt
+        this.updatedAt = updatedAt
+        this.deletedAt = deletedAt
+        this.version = version
+    }
+
     getList(){
         
         return repository.getList()
@@ -11,7 +22,9 @@ class File {
         })
     }
 
-    getListByUserId(userId){
+    getListByUserId(){
+
+        const userId = this.userId
 
         return repository.getListByUserId(userId)
         .then((result) => {
@@ -19,7 +32,9 @@ class File {
         })
     }
 
-    getById(id){
+    getById(){
+
+        const id = this.id
 
         return repository.getById(id)
         .then((result) => {
@@ -27,7 +42,10 @@ class File {
         })
     }
 
-    getByUserAndFileIds(id, userId){
+    getByUserAndFileIds(){
+
+        const id = this.id
+        const userId = this.userId
 
         return repository.getByUserAndFileIds(id, userId)
         .then((result) => {
@@ -35,33 +53,41 @@ class File {
         })
     }
     
-    add(file){
-        //tratar o multer aqui
-        
-        file.buffer = (file.buffer ? file.buffer : "d.png")
+    add(){
+
+        //Separar o upload e salvamento do arquivo em um método separado
+        let buffer = false
+        buffer = (buffer ? buffer : "d.png")
         
         const timestamp = new Date().getTime().toString()
-        file.filename = [`${timestamp.slice(timestamp.length - 5, timestamp.length)}`, 'png'].join('.')
+        const filename = [`${timestamp.slice(timestamp.length - 5, timestamp.length)}`, 'png'].join('.')
         
-        return fileFunc.uploadFile(file.buffer, file.filename)
+        return fileFunc.uploadFile(buffer, filename)
         .then(path => {
+            
+            this.path = path
+            this.duration = 150
 
-            file.path = path
-            delete file.filename
-            delete file.buffer
+            const file = {
+                userId: this.userId,
+                duration: this.duration,
+                path: this.path
+            }
             
             return  repository.add(file)
             .then((result) => {
-                
-                let id = result.insertId
-                file = {id, ...file}
-                
-                return file
+                return result.dataValues
             })
         })
     }
 
-    update(id, file) {
+    update() {
+
+        const id = this.id
+        const file = {
+            duration: this.duration, 
+            path: this.path
+        }
 
         return repository.update(id, file)
         .then((result) => {
@@ -69,7 +95,9 @@ class File {
         })
     }
 
-    delete(id) {
+    delete() {
+
+        const id = this.id
 
         return repository.delete(id)
         .then((result) => {
@@ -77,6 +105,16 @@ class File {
         })
     }
 
+    restore() {
+
+        const id = this.id
+        const file = { deletedAt: null }
+        
+        return repository.restore(id, file)
+        .then((result) => {
+            return result
+        })
+    }
 }
 
-module.exports = new File()
+module.exports = File

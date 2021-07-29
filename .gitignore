@@ -1,3 +1,10 @@
+# My list
+package-lock.json
+bin/cert.pem
+bin/privkey.pem
+config/
+public/
+
 # Logs
 logs
 *.log
@@ -38,7 +45,6 @@ bower_components
 build/Release
 
 # Dependency directories
-config/
 node_modules/
 jspm_packages/
 

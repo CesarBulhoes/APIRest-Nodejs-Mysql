@@ -14,9 +14,9 @@ router.get('/:id', fileCtrl.getById, fileCtrl.getByUserAndFileIds)
 router.post('/', fileValidation.checkExtension, routeValidation.checkErrors, fileCtrl.add) 
 
 // Updates a file
-router.put('/:fileId', fileCtrl.update) 
+router.put('/:id', fileCtrl.update) 
 
 // Sets a file as deleted
-router.delete('/:fileId', fileCtrl.delete) 
+router.delete('/:id', fileCtrl.delete) 
 
 module.exports = router

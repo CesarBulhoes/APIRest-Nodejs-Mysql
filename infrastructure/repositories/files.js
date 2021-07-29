@@ -64,6 +64,16 @@ class Files {
             }
         })
     }
+
+    restore(id, file){
+        
+        return this.schema.update(file, {
+            where: {
+              id: id
+            },
+            paranoid: false 
+        })
+     }
 }
 
 module.exports = new Files()

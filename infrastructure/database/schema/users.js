@@ -19,7 +19,11 @@ const columns = {
         type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         defaultValue: 0
-    }
+    },
+    // onDelete: 'cascade', 
+    // foreignKey: { allowNull: false }
+//   hooks: true
+
 
     // ,references: {
     //     // This is a reference to another model

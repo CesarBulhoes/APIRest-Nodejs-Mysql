@@ -44,6 +44,16 @@ class Users {
             }
         })
      }
+
+     restore(id, user){
+        
+        return this.schema.update(user, {
+            where: {
+              id: id
+            },
+            paranoid: false 
+        })
+     }
 }
 
 module.exports = new Users()
