@@ -4,6 +4,7 @@ bin/cert.pem
 bin/privkey.pem
 config/
 public/
+assets/*
 
 # Logs
 logs

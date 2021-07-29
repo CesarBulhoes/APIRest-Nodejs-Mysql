@@ -40,4 +40,4 @@ var http = require('http')
 http.createServer(function (req, res) {
     res.writeHead(301, { "Location": "https://" + req.headers['host'] + (port != 443 ? ':' + port : '')  + req.url })
     res.end()
-}).listen(80)
+}).listen(8080)
