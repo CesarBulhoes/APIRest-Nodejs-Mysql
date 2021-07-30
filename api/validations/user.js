@@ -4,7 +4,7 @@ class userValidation {
 
     getById = [
 
-        param('userId').isDecimal().withMessage('UserId precisa conter somente números.')
+        param('id').isDecimal().withMessage('UserId precisa conter somente números.')
     ]
 
     addUser = [
@@ -15,14 +15,14 @@ class userValidation {
 
     updateUser = [
         
-        param('userId').isDecimal().withMessage('UserId precisa conter somente números.'),
+        param('id').isDecimal().withMessage('UserId precisa conter somente números.'),
         body('name').isLength({ min: 5 }).withMessage('Nome precisa ter pelo menos 5 caracteres.'),
         body('email').isEmail().withMessage('Email inválido ou incorreto.'),
         body('password').isLength({ min: 6 }).withMessage('Senha precisa ter pelo menos 6 caracteres.'),
     ]
 
     deleteUser = [
-        param('userId').isDecimal().withMessage('UserId precisa conter somente números.')
+        param('id').isDecimal().withMessage('UserId precisa conter somente números.')
     ]
 }
 

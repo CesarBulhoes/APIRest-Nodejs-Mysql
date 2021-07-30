@@ -37,7 +37,7 @@ class File {
         const id = this.id
 
         return repository.getById(id)
-        .then((result) => {
+        .then((result) => { 
             return result[0]
         })
     }
@@ -76,7 +76,7 @@ class File {
             
             return  repository.add(file)
             .then((result) => {
-                return result.dataValues
+                return result.get({plain:true})
             })
         })
     }
@@ -88,10 +88,10 @@ class File {
             duration: this.duration, 
             path: this.path
         }
-
+        
         return repository.update(id, file)
-        .then((result) => {
-            return file
+        .then( result => { 
+            return result
         })
     }
 
@@ -101,7 +101,7 @@ class File {
 
         return repository.delete(id)
         .then((result) => {
-            return file
+            return result
         })
     }
 
@@ -113,6 +113,25 @@ class File {
         return repository.restore(id, file)
         .then((result) => {
             return result
+        })
+    }
+
+    load() {
+
+        const id = this.id
+        
+        return repository.load(id)
+        .then((result) => {
+            
+            this.userId = result[0].userId
+            this.duration = result[0].duration
+            this.path = result[0].path
+            this.createdAt = result[0].createdAt
+            this.updatedAt = result[0].updatedAt
+            this.deletedAt = result[0].deletedAt
+            this.version = result[0].version
+
+            return this
         })
     }
 }

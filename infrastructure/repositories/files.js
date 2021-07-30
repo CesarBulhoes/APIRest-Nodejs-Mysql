@@ -74,6 +74,17 @@ class Files {
             paranoid: false 
         })
      }
+
+     load(id){
+        
+        return this.schema.findAll({
+            where: {
+              id: id
+            },
+            raw: true ,
+            paranoid: false
+        })
+     }
 }
 
 module.exports = new Files()

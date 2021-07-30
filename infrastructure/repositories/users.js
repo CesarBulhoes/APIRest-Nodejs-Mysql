@@ -1,23 +1,25 @@
+const sequelize = require('../database/connection')
+
 class Users {
 
-    constructor(){ 
+    constructor() {
 
         this.schema = require('../database/schema/users')
     }
 
-    getList(){
-        
+    getList() {
+
         return this.schema.findAll({ raw: true })
 
     }
 
-    getById(id){
+    getById(id) {
 
         return this.schema.findAll({
             where: {
-              id: id
+                id: id
             },
-            raw: true 
+            raw: true
         })
     }
 
@@ -25,35 +27,49 @@ class Users {
 
         return this.schema.create(user)
 
-    }  
+    }
 
-    update(id, user){
-        
+    update(id, user) {
+
         return this.schema.update(user, {
             where: {
-              id: id
+                id: id
             }
         })
     }
 
-    delete(id){
-        
+    delete(id) {
+
         return this.schema.destroy({
             where: {
-              id: id
+                id: id
             }
         })
-     }
+    }
 
-     restore(id, user){
-        
-        return this.schema.update(user, {
+    async restore(id) {
+
+        const user = await this.schema.findOne({
             where: {
-              id: id
+                id: id
             },
-            paranoid: false 
+            paranoid: false
         })
-     }
+
+        user.setDataValue('deletedAt', null);
+        user.save()
+        return user
+    }
+
+    load(id){
+        return this.schema.findAll({
+            where: {
+                id: id
+            },
+            raw: true,
+            paranoid: false
+        })
+    }
 }
 
 module.exports = new Users()

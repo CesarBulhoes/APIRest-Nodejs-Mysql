@@ -17,9 +17,7 @@ function loadRoutes(app) {
 }
 
 function getRequiredType(requiredType, acceptedTypes) {
-
-
-
+    
     let splitedRequiredTypes = []
     requiredType = requiredType.split(',')
 
@@ -34,10 +32,10 @@ function getRequiredType(requiredType, acceptedTypes) {
     }
     
     for( let index in acceptedTypes ){
-
+        
         if (result[acceptedTypes[index]]) { 
 
-            if(acceptedTypes[index] == '*/*') acceptedTypes[index] = 'application/json'
+            if(acceptedTypes[index] == '*/*') return 'application/json'
             return acceptedTypes[index]
         }
     }

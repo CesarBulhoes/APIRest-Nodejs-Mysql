@@ -3,21 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/server.js"
+    "start": "pm2 --name server start ./bin/server.js",
+    "restart": "pm2 restart server",
+    "stop": "pm2 del server",
+    "test": "nodemon ./bin/server.js"
   },
   "dependencies": {
     "config": "^3.3.6",
     "express": "~4.16.1",
-    "express-basic-auth": "^1.2.0",
-    "express-validator": "^6.12.0",
+    "express-validator": "^6.12.1",
     "fs": "0.0.1-security",
     "jsontoxml": "^1.0.1",
     "moment": "^2.29.1",
     "mysql2": "^2.2.5",
+    "pm2": "^5.1.0",
     "sequelize": "^6.6.5",
     "spdy": "^4.0.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.10"
+    "nodemon": "^2.0.12"
   }
 }

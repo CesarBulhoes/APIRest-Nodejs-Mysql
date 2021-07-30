@@ -40,7 +40,7 @@ class User {
 
         return repository.add(user)
         .then((result) => {
-            return result.dataValues
+            return result.get({plain:true})
         })
     }
 
@@ -72,11 +72,30 @@ class User {
     restore() {
 
         const id = this.id
-        const user = { deletedAt: null }
         
-        return repository.restore(id, user)
+        return repository.restore(id)
         .then((result) => {
             return result
+        })
+    }
+
+    load() {
+
+        const id = this.id
+        
+        return repository.load(id)
+        .then((result) => {
+            
+            this.name = result[0].name
+            this.email = result[0].email
+            this.password = result[0].password
+            this.minutes = result[0].minutes
+            this.createdAt = result[0].createdAt
+            this.updatedAt = result[0].updatedAt
+            this.deletedAt = result[0].deletedAt
+            this.version = result[0].version
+
+            return this
         })
     }
 }

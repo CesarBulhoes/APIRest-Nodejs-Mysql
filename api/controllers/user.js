@@ -6,35 +6,63 @@ class userCtrl {
 
     getList = (req, res, next) => {
         
-        const serializer = new UserSerializer(res.getHeader('Content-Type'))
+        const serializer = new UserSerializer(res.getHeader('Content-Type'), ['version'])
 
         const users = new userModel({})
         
         users.getList()
         .then(result => {
             
-            if( result[0] ) res.status(200).send(serializer.serialize(result))  
+            if( result[0] ){ 
 
-            else throw new ErrorNotFound('Usuário')
+                res.status(200).send(serializer.serialize(result))  
+
+            } else throw new ErrorNotFound('Usuário')
         })
         .catch(error => next(error))
     }
     
     getById = (req, res, next) => {
-
+        
         const serializer = new UserSerializer(res.getHeader('Content-Type'),
         ['password', 'createdAt', 'updatedAt', 'deletedAt', 'version'])
         
-        const id = req.params.userId
+        const id = req.params.id
 
         const users = new userModel({id: id})
         
-        users.getById(id)
+        users.getById()
         .then(result =>  {
-            
-            if( result ) res.status(200).send(serializer.serialize(result)) 
 
-            else throw new ErrorNotFound('Usuário')
+            if( result ) {
+                
+                const timestamp = new Date(result.updatedAt).getTime()
+                res.set('Last-Modified', timestamp)
+                res.set('ETag', result.version)
+                res.status(200).send(serializer.serialize(result)) 
+
+            }else throw new ErrorNotFound('Usuário')
+        })
+        .catch(error => next(error))
+    }
+
+    getHeadById = (req, res, next) => {
+        
+        const id = req.params.id
+
+        const users = new userModel({id: id})
+        
+        users.load()
+        .then(result =>  {
+
+            if( result ) {
+                
+                const timestamp = new Date(result.updatedAt).getTime()
+                res.set('Last-Modified', timestamp)
+                res.set('ETag', result.version)
+                res.status(200).end() 
+
+            }else throw new ErrorNotFound('Usuário')
         })
         .catch(error => next(error))
     }
@@ -46,21 +74,37 @@ class userCtrl {
         const users = new userModel({name: req.body.name, email: req.body.email, password: req.body.password})
         
         users.add()
-        .then(result => res.status(201).send(serializer.serialize(result)))
+        .then(result => {
+
+            const timestamp = new Date(result.updatedAt).getTime()
+            res.set('Last-Modified', timestamp)
+            res.set('ETag', result.version)
+            res.set('Location', `/api/users/${result.id}`)
+            res.status(201).send(serializer.serialize(result))
+        })
         .catch(error => next(error))
     }
     
     update = (req, res, next) => {
 
-        const id = req.params.userId
+        const id = req.params.id
         const users = new userModel({id: id, name: req.body.name, email: req.body.email, password: req.body.password})
         
         users.update()
-        .then(result => {
+        .then( async result => {
             
-            if( result[0] ) res.status(204).end() 
+            if( result[0] ){ 
 
-            else throw new ErrorNotFound('Usuário')
+                result = await users.load()
+                
+                const timestamp = new Date(result.updatedAt).getTime()
+                res.set('Last-Modified', timestamp)
+                res.set('ETag', result.version)
+                res.set('Location', `/api/users/${result.id}`)
+
+                res.status(204).end() 
+
+            }else throw new ErrorNotFound('Usuário')
         
         })
         .catch(error => next(error))
@@ -68,7 +112,7 @@ class userCtrl {
     
     delete = (req, res, next) => {
 
-        const id = req.params.userId
+        const id = req.params.id
 
         const users = new userModel({id: id})
         
@@ -84,23 +128,30 @@ class userCtrl {
 
     restore = (req, res, next) => {
 
-        const id = req.params.userId
+        const id = req.params.id
 
         const users = new userModel({id: id})
         
         users.restore()
-        .then(result => {
+        .then(async result => {
 
-            if( result[0] ) res.status(204).end() 
+            if( result ){ 
+                
+                result = await users.load()
 
-            else throw new ErrorNotFound('Usuário')
+                const timestamp = new Date(result.updatedAt).getTime()
+                res.set('Last-Modified', timestamp)
+                res.set('ETag', result.version)
+                res.status(204).end() 
+
+            } else throw new ErrorNotFound('Usuário')
         })
         .catch(error => next(error))
     }
 
     checkUserById = (req, res, next) => {
 
-        const id = req.params.userId
+        const id = req.params.id
 
         if(!id) return next()
 

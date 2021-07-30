@@ -1,16 +1,17 @@
 const spdy = require('spdy')
 const app = require('../app')
-const https = require('http')
 const connection = require('../infrastructure/database/connection')
 const config = require('config')
 const fs = require('fs')
+const path = require('path')
 const port = normalizePort(config.get('api.port') || 443)
 
-const server = https.createServer(app)
+const keyPath = path.resolve('bin/privkey.pem')
+const certPath = path.resolve('bin/cert.pem')
 
 const options = {
-  key: fs.readFileSync("bin\\privkey.pem"),
-  cert: fs.readFileSync("bin\\cert.pem"),
+  key: fs.readFileSync(keyPath),
+  cert: fs.readFileSync(certPath),
 } 
 
 connection
