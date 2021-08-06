@@ -1,38 +1,52 @@
-const Sequelize = require('sequelize')
-const connection = require('../connection')
-
-const columns = {
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class File extends Model {
+    
+    static associate(models) {
+      File.belongsTo(models.users, {
+        foreignKey: 'userId'
+      });
+    }
+  };
+  File.init({
     userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        onDelete: 'CASCADE',
-        references: {
-            model: 'users',
-            key: 'id'
-        }
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      onDelete: 'CASCADE',
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     },
-    // extension: {
-    //     type: Sequelize.ENUM("mp4"),
-    //     allowNull: false
-    // },
     duration: {
-        type: Sequelize.INTEGER.UNSIGNED,
-        allowNull: false,
-        defaultValue: 0
+      type: DataTypes.INTEGER.UNSIGNED,
+      defaultValue: null,
+      validate: {
+        Duration: (duration) => {
+          console.log(duration)
+          if(!duration || !Number.isInteger(duration)) throw new Error('Duração inválida, necessário ser um valor inteiro maior que 0 segundos')
+        }
+      }
     },
     path: {
-        type: Sequelize.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: {
+          msg: 'O caminho para o arquivo não pode ser vazio'
+        }
+      }
     }
-}
-
-const options = {
+  }, {
+    sequelize,
     timestamps: true,
     paranoid: true,
     freezeTableName: true,
-    tableName: 'files',
-    version: "version"
-
-}
-
-module.exports = connection.define('files', columns, options)
+    version: "version",
+    modelName: 'files',
+  });
+  return File;
+};

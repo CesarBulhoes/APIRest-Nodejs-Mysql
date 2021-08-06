@@ -2,12 +2,22 @@ const jsontoxml = require('jsontoxml')
 
 class Serializer {
 
-    json(data) {
-        return JSON.stringify(data)
+    json(data, count = null) {
+        
+        let result = {}
+
+        if(count) {
+            result.count = count
+            result[this.tagPlural] = data     
+        }else{
+            result[this.tagSingle] = data  
+        }
+        
+        return JSON.stringify(result)
     }
 
-    xml(data) {
-
+    xml(data, count = null) {
+        
         let arr = data
         let tag = this.tagSingle
 
@@ -29,15 +39,17 @@ class Serializer {
         if(data.errors){
             
             xml = {status: data.status, [tag]:arr}
-            // arr = {status, ...arr}
         }
-
-
+        
+        if(count) xml = {count, ...xml}
 
         return jsontoxml(xml)
     }
 
     serialize(data) { 
+
+        let count = (data.count ? data.count : null)
+        data = (data.rows ? data.rows : data)
 
         if(Array.isArray(data) && data.length > 1) data = data.map(el => this.filter(el))
         else if(Array.isArray(data))  data = this.filter(data[0])
@@ -45,12 +57,12 @@ class Serializer {
         
         if(this.contentType === 'application/json') {
             
-            return this.json(data)
+            return this.json(data, count)
         }
 
         if(this.contentType === 'application/xml') {
 
-            return this.xml(data)
+            return this.xml(data, count)
         }
 
         return this.filter(data)
@@ -93,7 +105,17 @@ class FileSerializer extends Serializer{
 class ErrorSerializer extends Serializer{
     constructor(contentType, extraColumns = []){
         super()
-        this.publicColumns = ['status', 'errors', 'error', 'mensage']
+        this.publicColumns = ['status', 'errors', 'error', 'msg', 'param', 'location', 'message', 'path', 'value', 'validatorKey'].concat(extraColumns)
+        this.contentType = contentType
+        this.tagSingle = 'error'
+        this.tagPlural = 'errors'
+    }
+}
+
+class ErrorSequelizeValidation extends Serializer{
+    constructor(contentType, extraColumns = []){
+        super()
+        this.publicColumns = ['message', 'path', 'value', 'validatorKey'].concat(extraColumns)
         this.contentType = contentType
         this.tagSingle = 'error'
         this.tagPlural = 'errors'
@@ -104,6 +126,7 @@ module.exports = {
     Serializer: Serializer,
     UserSerializer: UserSerializer,
     ErrorSerializer: ErrorSerializer,
+    ErrorSequelizeValidation: ErrorSequelizeValidation,
     FileSerializer: FileSerializer,
     acceptedTypes: ['application/json', 'application/xml', '*/*']
 }

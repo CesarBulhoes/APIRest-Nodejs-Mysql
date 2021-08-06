@@ -13,8 +13,16 @@ class fileCtrl {
         const file = new fileModel({})
 
         file.getList()
-        .then(result => res.status(200).send(serializer.serialize(result)))
+        .then(result => {
+            
+            if( result.rows[0] ) {
+                
+                res.status(200).send(serializer.serialize(result))
+
+            } else throw new ErrorNotFound('Arquivo')
+        })
         .catch(error => next(error))
+
     } 
 
     getListByUserId = (req, res, next) => {
@@ -25,7 +33,13 @@ class fileCtrl {
         const file = new fileModel({userId: userId})
 
         file.getListByUserId()
-        .then(result => res.status(200).send(serializer.serialize(result)))
+        .then(result => {
+            if( result.rows[0] ) {
+                
+                res.status(200).send(serializer.serialize(result))
+    
+            } else throw new ErrorNotFound('Arquivo')
+        })
         .catch(error => next(error))
     } 
     
@@ -41,8 +55,8 @@ class fileCtrl {
 
         file.getById()
         .then(result => {
-
-            if( result ) {
+console.log(result)
+            if( result[0] ) {
                 
                 const timestamp = new Date(result.updatedAt).getTime()
                 res.set('Last-Modified', timestamp)
@@ -88,7 +102,7 @@ class fileCtrl {
         file.getByUserAndFileIds()
         .then(result => {
             
-            if( result ) {
+            if( result[0] ) {
                 
                 const timestamp = new Date(result.updatedAt).getTime()
                 res.set('Last-Modified', timestamp)
@@ -125,7 +139,7 @@ class fileCtrl {
     add = (req, res, next) => { 
 
         //tratar o upload antes e salvar o path no req.body
-
+        
         const serializer = new FileSerializer(res.getHeader('Content-Type'))
         
         const file = new fileModel({userId: req.body.userId, duration: req.body.duration})
@@ -142,16 +156,18 @@ class fileCtrl {
         .catch(error => next(error))
     } 
     
-    update = (req, res, next) => {
+    update = async (req, res, next) => {
         
         const id = req.params.id
         
-        const file = new fileModel({id: id, userId: req.body.userId, duration: req.body.duration, path: req.body.path})
+        let file = new fileModel({id: id, userId: req.body.userId, duration: req.body.duration, path: req.body.path})
+
+        file = await file.load()
 
         file.update()
         .then(async result => {
             
-            if( result[0] ) {
+            if( result ) {
 
                 result = await file.load()
                 

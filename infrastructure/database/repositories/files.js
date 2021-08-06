@@ -2,21 +2,22 @@ class Files {
 
     constructor(){ 
 
-        this.schema = require('../database/schema/files')
+        this.schema = require('../schema').files
     }
 
     getList(){
 
-        return this.schema.findAll({ raw: true })
+        const options = {}
+
+        return this.schema.findAndCountAll(options)
     }
 
     getListByUserId(userId){
 
-        return this.schema.findAll({
+        return this.schema.findAndCountAll({
             where: {
-              userId: userId
-            },
-            raw: true 
+              userId: Number(userId)
+            }
         })
     }
 
@@ -24,9 +25,8 @@ class Files {
 
         return this.schema.findAll({
             where: {
-              id: id
-            },
-            raw: true 
+              id: Number(id)
+            }
         })
     }
 
@@ -34,10 +34,9 @@ class Files {
 
         return this.schema.findAll({
             where: {
-              id: id,
-              userId: userId
-            },
-            raw: true 
+              id: Number(id),
+              userId: Number(userId)
+            }
         })
     }
 
@@ -51,7 +50,7 @@ class Files {
 
         return this.schema.update(file, {
             where: {
-              id: id
+              id: Number(id)
             }
         })
     }
@@ -60,7 +59,7 @@ class Files {
 
         return this.schema.destroy({
             where: {
-              id: id
+              id: Number(id)
             }
         })
     }
@@ -69,7 +68,7 @@ class Files {
         
         return this.schema.update(file, {
             where: {
-              id: id
+              id: Number(id)
             },
             paranoid: false 
         })
@@ -79,9 +78,8 @@ class Files {
         
         return this.schema.findAll({
             where: {
-              id: id
+              id: Number(id)
             },
-            raw: true ,
             paranoid: false
         })
      }

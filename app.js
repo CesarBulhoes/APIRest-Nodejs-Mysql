@@ -34,6 +34,12 @@ app.use((error, req, res, next) => {
     let status = (error.status || 500)
 
     const errorSerializer = new ErrorSerializer(res.getHeader('Content-Type'))
+
+    if(error.errors) error = error.errors
+
+    if(error.message == "Unknown column 'NaN' in 'where clause'"){
+        error.message = "Not a Number Error."
+    }
     
     res.status(status).send(errorSerializer.serialize(error))
 }) 

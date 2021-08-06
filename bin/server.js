@@ -1,6 +1,6 @@
 const spdy = require('spdy')
 const app = require('../app')
-const connection = require('../infrastructure/database/connection')
+const connection = require('../infrastructure/database/schema')
 const config = require('config')
 const fs = require('fs')
 const path = require('path')
@@ -14,7 +14,7 @@ const options = {
   cert: fs.readFileSync(certPath),
 } 
 
-connection
+connection.sequelize
 .sync()
 .then(() => {
 

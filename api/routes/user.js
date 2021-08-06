@@ -5,8 +5,6 @@ const userCtrl = require('../controllers/user')
 const userValidation = require('../validations/user')
 const files = require('./files/file')
 
-
-
 // redirects to the FILES route
 router.use('/:userId?/files', userCtrl.checkUserById, files)
 

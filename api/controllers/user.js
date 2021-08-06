@@ -10,10 +10,10 @@ class userCtrl {
 
         const users = new userModel({})
         
-        users.getList()
+        users.getList(req.query)
         .then(result => {
             
-            if( result[0] ){ 
+            if( result.rows[0] ){ 
 
                 res.status(200).send(serializer.serialize(result))  
 
@@ -29,12 +29,12 @@ class userCtrl {
         
         const id = req.params.id
 
-        const users = new userModel({id: id})
+        const user = new userModel({id: id})
         
-        users.getById()
+        user.getById()
         .then(result =>  {
 
-            if( result ) {
+            if( result[0] ) {
                 
                 const timestamp = new Date(result.updatedAt).getTime()
                 res.set('Last-Modified', timestamp)
@@ -50,9 +50,9 @@ class userCtrl {
         
         const id = req.params.id
 
-        const users = new userModel({id: id})
+        const user = new userModel({id: id})
         
-        users.load()
+        user.load()
         .then(result =>  {
 
             if( result ) {
@@ -71,9 +71,9 @@ class userCtrl {
 
         const serializer = new UserSerializer(res.getHeader('Content-Type'))
         
-        const users = new userModel({name: req.body.name, email: req.body.email, password: req.body.password})
+        const user = new userModel({name: req.body.name, email: req.body.email, password: req.body.password})
         
-        users.add()
+        user.add()
         .then(result => {
 
             const timestamp = new Date(result.updatedAt).getTime()
@@ -85,23 +85,24 @@ class userCtrl {
         .catch(error => next(error))
     }
     
-    update = (req, res, next) => {
+    update = async (req, res, next) => {
 
         const id = req.params.id
-        const users = new userModel({id: id, name: req.body.name, email: req.body.email, password: req.body.password})
+        let user = new userModel({id: id, name: req.body.name, email: req.body.email, password: req.body.password, minutes: req.body.minutes})
         
-        users.update()
+        user = await user.load()
+        
+        user.update()
         .then( async result => {
             
-            if( result[0] ){ 
+            if( result ){ 
 
-                result = await users.load()
+                result = await user.load()
                 
                 const timestamp = new Date(result.updatedAt).getTime()
                 res.set('Last-Modified', timestamp)
                 res.set('ETag', result.version)
                 res.set('Location', `/api/users/${result.id}`)
-
                 res.status(204).end() 
 
             }else throw new ErrorNotFound('Usuário')
