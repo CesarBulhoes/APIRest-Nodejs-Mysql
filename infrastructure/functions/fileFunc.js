@@ -3,7 +3,7 @@ const path = require('path')
 
 
 ///Users/cesar/OneDrive/Documentos/NodeJS-Tutorial/functions/images
-class fileFunc {
+class FileFunc {
 
     uploadFile(buffer, filename){
         
@@ -18,4 +18,4 @@ class fileFunc {
     }
 }
 
-module.exports = new fileFunc()
+module.exports = new FileFunc()

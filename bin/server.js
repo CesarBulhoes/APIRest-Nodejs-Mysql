@@ -1,6 +1,6 @@
 const spdy = require('spdy')
 const app = require('../app')
-const connection = require('../infrastructure/database/schema')
+const connection = require('../api/models')
 const config = require('config')
 const fs = require('fs')
 const path = require('path')

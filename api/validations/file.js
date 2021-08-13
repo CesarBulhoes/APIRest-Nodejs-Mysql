@@ -1,6 +1,6 @@
 const {body, validationResult} = require('express-validator')
 
-class fileValidation {
+class FileValidation {
 
     checkExtension = [
         // body('filename').custom(filename => {
@@ -15,4 +15,4 @@ class fileValidation {
 
 }
 
-module.exports = new fileValidation()
+module.exports = new FileValidation()

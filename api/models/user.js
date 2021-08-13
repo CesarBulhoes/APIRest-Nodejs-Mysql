@@ -1,104 +1,87 @@
-const repository = require('../../infrastructure/database/repositories/users')
-
-class User {
-
-    constructor({ id, name, email, password, minutes, createdAt, updatedAt, deletedAt, version }) {
-        this.id         = id
-        this.name       = name
-        this.email      = email
-        this.password   = password
-        this.minutes    = minutes
-        this.createdAt  = createdAt
-        this.updatedAt  = updatedAt
-        this.deletedAt  = deletedAt
-        this.version    = version
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    static associate(models) {
+      User.hasMany(models.Files, {
+        foreignKey: 'userId',
+        // {
+        //   name: 'userId',
+        //   allowNull: false
+        // },
+        // scope: { paranoid: false }, //scope is optional
+        as: 'Files'
+      })
     }
-
-    getList(data) {
-
-        return repository.getList(data)
-            .then((result) => {
-                
-                result.rows = result.rows.map(el => el.get())
-                return result
-            })
-    }
-
-    getById() {
-
-        return repository.getById(this.id)
-            .then(async (result) => {
-                return await result.map(el => el.get())
-            })
-    }
-
-    add() {
-
-        const user = {
-            name: this.name,
-            email: this.email,
-            password: this.password
+  };
+  User.init({
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: {
+          args: [3, 50],
+          msg: "'Nome' precisa ter pelo menos 3 caracteres."
         }
-
-        return repository.add(user)
-            .then((result) => { 
-                return result.get()
-            })
-    }
-
-    update() {
-
-        const id = this.id
-        const user = {
-            name: this.name,
-            email: this.email,
-            password: this.password
+        // custom: (data) => {
+        //   if(data.length < 3) throw new Error('tá errado')
+        // }
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        isEmail:// true
+        {
+          args: true,
+          msg: "'Email' inválido"
+        },
+        len: {
+          args: [3, 50],
+          msg: "'Email' precisa ter pelo menos 3 caracteres"
         }
-
-        return repository.update(id, user)
-            .then((result) => { console.log(result)
-                return result[0]
-            })
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: {
+          args: [6, 50],
+          msg: "'Senha' precisa ter pelo menos 6 caracteres"
+        }
+      }
+    },
+    minutes: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        custom: (minutes) => {
+          if (minutes < 0) throw Error("'Minutes' precisa ser maior ou igual a 0")
+        }
+      }
     }
-
-    delete() {
-
-        const id = this.id
-
-        return repository.delete(id)
-            .then((result) => {
-                return result
-            })
+  }, {
+    sequelize,
+    timestamps: true,
+    paranoid: true,
+    freezeTableName: true,
+    version: 'version',
+    modelName: 'Users',
+    defaultScope: { // Sets a global condiciotal to all querys
+      where: {
+        //     name: 'Test1'
+      }
+    },
+    scopes: { // scopes override defaultScopes in the squelize functions 'this.schema.scope('scopeTest').findAll({ raw: true })'
+      //scopeTest: { value } 
     }
+  });
+  return User;
+};
 
-    restore() {
-
-        const id = this.id
-
-        return repository.restore(id)
-            .then((result) => {
-                return result
-            })
-    }
-
-    load() {
-
-        const id = this.id
-
-        return repository.load(id)
-            .then((result) => {
-
-                if (this.name === undefined)        this.name = result[0].dataValues.name
-                if (this.email === undefined)       this.email = result[0].dataValues.email
-                if (this.password === undefined)    this.password = result[0].dataValues.password
-                if (this.minutes === undefined)     this.minutes = result[0].dataValues.minutes
-                if (this.createdAt === undefined)   this.createdAt = result[0].dataValues.createdAt
-                if (this.updatedAt === undefined)   this.updatedAt = result[0].dataValues.updatedAt
-                if (this.deletedAt === undefined)   this.deletedAt = result[0].dataValues.deletedAt
-                if (this.version === undefined)     this.version = result[0].dataValues.version
-                return this
-            })
-    }
-}
-
-module.exports = User

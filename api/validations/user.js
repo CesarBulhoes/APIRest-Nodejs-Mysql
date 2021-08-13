@@ -1,6 +1,6 @@
 const {body, param, cookie, header, query, checkSchema} = require('express-validator')
 
-class userValidation {
+class UserValidation {
 
     getById = [
 
@@ -26,4 +26,4 @@ class userValidation {
     ]
 }
 
-module.exports = new userValidation()
+module.exports = new UserValidation()

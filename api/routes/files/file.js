@@ -12,13 +12,14 @@ router.options('/:id?', (req, res, next) => {
     res.status(204).end()
   })
 
-// Returns all files not deleted
-router.get('/', fileCtrl.getList, fileCtrl.getListByUserId) 
+  
+// Returns headers for a specific file. It needs to be declared before any get route with the same signature.
+// Otherwise, the head request will be accepted by the GET route. GET routes in Express accepts both GET and HEAD requests.
+router.head('/:id', fileCtrl.getHead) 
 
-// Returns a file by id
-router.get('/:id', fileCtrl.getById, fileCtrl.getByUserAndFileIds) 
+// Returns files not deleted
+router.get('/:id?', fileCtrl.getList) 
 
-router.head('/:id', fileCtrl.getHeadById, fileCtrl.getHeadByUserAndFileIds) 
 
 // Creates a new file
 router.post('/', fileValidation.checkExtension, routeValidation.checkErrors, fileCtrl.add) 
@@ -28,8 +29,5 @@ router.put('/:id', fileCtrl.update)
 
 // Sets a file as deleted
 router.delete('/:id', fileCtrl.delete) 
-
-// Sets a file as deleted
-router.post('/:id/restore', fileCtrl.restore) 
 
 module.exports = router

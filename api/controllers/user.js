@@ -1,23 +1,22 @@
-const userModel = require('../models/user')
 const ErrorNotFound = require('../../errors/errorNotFound')
-const UserSerializer = require('../serializer').UserSerializer
+const { UserSerializer } = require('../serializer')
+const { UserServices} = require('../services')
+const userServices = new UserServices()
 
-class userCtrl {
+class UserCtrl {
 
     getList = (req, res, next) => {
         
         const serializer = new UserSerializer(res.getHeader('Content-Type'), ['version'])
-
-        const users = new userModel({})
         
-        users.getList(req.query)
+        userServices.getAll(req.query)
         .then(result => {
             
-            if( result.rows[0] ){ 
+            if( result ){ 
 
                 res.status(200).send(serializer.serialize(result))  
 
-            } else throw new ErrorNotFound('Usuário')
+            } else throw new ErrorNotFound('Users')
         })
         .catch(error => next(error))
     }
@@ -28,15 +27,13 @@ class userCtrl {
         ['password', 'createdAt', 'updatedAt', 'deletedAt', 'version'])
         
         const id = req.params.id
-
-        const user = new userModel({id: id})
         
-        user.getById()
+        userServices.getById(id)
         .then(result =>  {
-
-            if( result[0] ) {
+            
+            if( result ) {
                 
-                const timestamp = new Date(result.updatedAt).getTime()
+                const timestamp = new Date(result.updatedAt)
                 res.set('Last-Modified', timestamp)
                 res.set('ETag', result.version)
                 res.status(200).send(serializer.serialize(result)) 
@@ -49,15 +46,13 @@ class userCtrl {
     getHeadById = (req, res, next) => {
         
         const id = req.params.id
-
-        const user = new userModel({id: id})
         
-        user.load()
+        userServices.load(id)
         .then(result =>  {
 
             if( result ) {
                 
-                const timestamp = new Date(result.updatedAt).getTime()
+                const timestamp = new Date(result.updatedAt)
                 res.set('Last-Modified', timestamp)
                 res.set('ETag', result.version)
                 res.status(200).end() 
@@ -70,13 +65,13 @@ class userCtrl {
     add = (req, res, next) => {
 
         const serializer = new UserSerializer(res.getHeader('Content-Type'))
-        
-        const user = new userModel({name: req.body.name, email: req.body.email, password: req.body.password})
-        
-        user.add()
+
+        const user = req.body
+
+        userServices.add(user)
         .then(result => {
 
-            const timestamp = new Date(result.updatedAt).getTime()
+            const timestamp = new Date(result.updatedAt)
             res.set('Last-Modified', timestamp)
             res.set('ETag', result.version)
             res.set('Location', `/api/users/${result.id}`)
@@ -85,21 +80,22 @@ class userCtrl {
         .catch(error => next(error))
     }
     
-    update = async (req, res, next) => {
+    update = (req, res, next) => {
 
         const id = req.params.id
-        let user = new userModel({id: id, name: req.body.name, email: req.body.email, password: req.body.password, minutes: req.body.minutes})
         
-        user = await user.load()
+        let user = req.body
         
-        user.update()
+        if(!user.password) delete user.password
+
+        userServices.update(user, id)
         .then( async result => {
             
             if( result ){ 
-
-                result = await user.load()
                 
-                const timestamp = new Date(result.updatedAt).getTime()
+                result = await userServices.load(id)
+                
+                const timestamp = new Date(result.updatedAt)
                 res.set('Last-Modified', timestamp)
                 res.set('ETag', result.version)
                 res.set('Location', `/api/users/${result.id}`)
@@ -114,10 +110,8 @@ class userCtrl {
     delete = (req, res, next) => {
 
         const id = req.params.id
-
-        const users = new userModel({id: id})
         
-        users.delete()
+        userServices.delete(id)
         .then(result => {
             
             if( result )  res.status(204).end() 
@@ -131,16 +125,14 @@ class userCtrl {
 
         const id = req.params.id
 
-        const users = new userModel({id: id})
-        
-        users.restore()
+        userServices.restore(id)
         .then(async result => {
 
             if( result ){ 
                 
-                result = await users.load()
+                result = await userServices.load(id)
 
-                const timestamp = new Date(result.updatedAt).getTime()
+                const timestamp = new Date(result.updatedAt)
                 res.set('Last-Modified', timestamp)
                 res.set('ETag', result.version)
                 res.status(204).end() 
@@ -155,10 +147,8 @@ class userCtrl {
         const id = req.params.id
 
         if(!id) return next()
-
-        const users = new userModel({id: id})
         
-        users.getById()
+        userServices.getById(id)
         .then(result =>  {
             
             if( result ) return next()
@@ -170,4 +160,4 @@ class userCtrl {
     
 }
 
-module.exports = new userCtrl()
+module.exports = new UserCtrl()

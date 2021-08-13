@@ -6,7 +6,7 @@ const userValidation = require('../validations/user')
 const files = require('./files/file')
 
 // redirects to the FILES route
-router.use('/:userId?/files', userCtrl.checkUserById, files)
+router.use('/:userId?/files', files)
 
 router.options('/:id?', (req, res, next) => {
 
@@ -19,10 +19,12 @@ router.options('/:id?', (req, res, next) => {
 // Returns all users not deleted
 router.get('/', userCtrl.getList) 
 
+// It needs to be declared before any get route with the same signature.
+// Otherwise, the head request will be accepted by the GET route. GET routes in Express accepts both GET and HEAD requests.
+router.head('/:id', userValidation.getById, routeValidation.checkErrors, userCtrl.getHeadById) 
+
 // Returns a user by id
 router.get('/:id', userValidation.getById, routeValidation.checkErrors, userCtrl.getById) 
-
-router.head('/:id', userValidation.getById, routeValidation.checkErrors, userCtrl.getHeadById) 
 
 // Creates a new user
 router.post('/', userValidation.addUser, routeValidation.checkErrors, userCtrl.add) 
