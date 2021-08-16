@@ -25,17 +25,28 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER.UNSIGNED,
       defaultValue: null,
       validate: {
-        Duration: (duration) => {
-          if(!duration || !Number.isInteger(duration)) throw new Error('Duração inválida, necessário ser um valor inteiro maior que 0 segundos')
+        Duration: (duration) => { //It can be null, if not null it needs to be a nonnegative number
+          if( !duration || (!Number.isInteger(Number(duration))) && Number(duration) > 0 ) throw new Error("'Duration' must be a nonnegative number.")
         }
       }
     },
+    // size: {
+    //   type: DataTypes.INTEGER.UNSIGNED,
+    //   defaultValue: 0,
+    //   allowNull: false,
+    //   validate: {
+    //     min: {
+    //       args: 0,
+    //       msg: "'Size' must be a nonnegative number."
+    //     }
+    //   }
+    // },
     path: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: 'O caminho para o arquivo não pode ser vazio'
+          msg: "'Path' must not be empty."
         }
       }
     }

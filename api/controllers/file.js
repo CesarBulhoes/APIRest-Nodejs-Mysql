@@ -77,12 +77,12 @@ class FileCtrl {
         
         const id = req.params.id
 
-        fileServices.update(req.body, id)
+        fileServices.update(req.body, { id: id })
         .then(async result => {
             
             if( result ) {
 
-                result = await file.load()
+                result = await fileServices.getById(id)
                 
                 const timestamp = new Date(result.updatedAt)
                 res.set('Last-Modified', timestamp)

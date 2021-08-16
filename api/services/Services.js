@@ -43,7 +43,7 @@ class Services {
 
         const options = {
             where: {
-                id: id
+                id: Number(id)
             }
 
         }
@@ -58,12 +58,10 @@ class Services {
         return (result ? result.get() : null)
     }
 
-    async update(data, id, transaction = {}) {
-
+    async update(data, where, transaction = {}) {
+        
         const options = {
-            where: {
-                id: Number(id)
-            }
+            where
         }
 
         let result = await database[this.modelName].update(data, options, transaction)
@@ -75,13 +73,12 @@ class Services {
         
         const options = {
             where: {
-                id: Number(id),
-                deletedAt: null
+                id: Number(id)
             }
         }
-
-        let result = await database[this.modelName].update({ deletedAt: new Date() }, options)
-        return result[0] 
+        
+        let result = await database[this.modelName].destroy(options)
+        return result 
     }
 
     async restore(id) {

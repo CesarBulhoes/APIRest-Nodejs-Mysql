@@ -7,10 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.hasMany(models.Files, {
         foreignKey: 'userId',
-        // {
-        //   name: 'userId',
-        //   allowNull: false
-        // },
         // scope: { paranoid: false }, //scope is optional
         as: 'Files'
       })
@@ -21,13 +17,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
+        isAlpha: {
+          msg: "'Name' must contain only letters."
+        }, 
         len: {
           args: [3, 50],
-          msg: "'Nome' precisa ter pelo menos 3 caracteres."
+          msg: "'Name' must have a length between 3 and 50 characteres."
         }
-        // custom: (data) => {
-        //   if(data.length < 3) throw new Error('tá errado')
-        // }
       }
     },
     email: {
@@ -38,11 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         isEmail:// true
         {
           args: true,
-          msg: "'Email' inválido"
-        },
-        len: {
-          args: [3, 50],
-          msg: "'Email' precisa ter pelo menos 3 caracteres"
+          msg: "'Email' is invalid."
         }
       }
     },
@@ -50,9 +42,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        len: {
-          args: [6, 50],
-          msg: "'Senha' precisa ter pelo menos 6 caracteres"
+        password: function(password) {
+          if(!(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,50}$/.test(password))) {
+              throw new Error("'Password' must contain at least 8 and maximum 50 characters including at least 1 uppercase, 1 lowercase, one number and one special character (@, $, !, %, *, ?, &).");
+          }
         }
       }
     },
@@ -61,8 +54,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0,
       validate: {
-        custom: (minutes) => {
-          if (minutes < 0) throw Error("'Minutes' precisa ser maior ou igual a 0")
+        isNumeric: {
+          msg: "'Minutes' must be a number."
+        },
+        min: {
+          args: [0],
+          msg: "'Minutes' must be nonnegative."
         }
       }
     }

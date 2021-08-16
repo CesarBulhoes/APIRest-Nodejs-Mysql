@@ -10,7 +10,7 @@ class UserServices extends Services{
     async delete(id){
         
         return database.sequelize.transaction(async (t) => {
-
+            
             await this.fileServices.update({ deletedAt: new Date() }, { userId: Number(id) }, { transaction: t })
             return await super.update({ deletedAt: new Date() }, { id: Number(id) }, { transaction: t })
         })

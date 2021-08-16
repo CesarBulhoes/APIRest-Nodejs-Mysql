@@ -1,20 +1,26 @@
-const { validationResult } = require('express-validator') 
+const {body, param, cookie, header, query, checkSchema, validationResult } = require('express-validator') 
 const ErrorIncorrectInput = require('../../errors/errorIncorrectInput')
 
-class routeCtrl {
+function checkErrors(req, res, next) {
+    const errors = validationResult(req) 
+    if (!errors.isEmpty()) {
 
-    checkErrors(req, res, next) {
-        const errors = validationResult(req) 
-        if (!errors.isEmpty()) {
-
-            throw new ErrorIncorrectInput(errors.array())
-            
-        } else {
-            return next() 
-        }
+        throw new ErrorIncorrectInput(errors.array())
+        
+    } else {
+        return next() 
     }
 }
 
+validateId = [
 
-module.exports = new routeCtrl()
+    param('id').optional({nullable: true}).isDecimal().withMessage("'Id' needs to be a number."),
+    param('userId').optional({nullable: true}).isDecimal().withMessage("'Id' needs to be a number.")
+]
+
+
+module.exports = {
+    checkErrors: checkErrors,
+    validateId: validateId
+}
 

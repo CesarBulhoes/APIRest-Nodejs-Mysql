@@ -87,8 +87,8 @@ class UserCtrl {
         let user = req.body
         
         if(!user.password) delete user.password
-
-        userServices.update(user, id)
+        
+        userServices.update(user, { id: Number(id) })
         .then( async result => {
             
             if( result ){ 

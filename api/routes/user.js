@@ -1,8 +1,7 @@
 const express = require('express') 
 const router = express.Router() 
-const routeValidation = require('../validations/route')
+const { checkErrors, validateId } = require('../validations/route')
 const userCtrl = require('../controllers/user') 
-const userValidation = require('../validations/user')
 const files = require('./files/file')
 
 // redirects to the FILES route
@@ -21,22 +20,22 @@ router.get('/', userCtrl.getList)
 
 // It needs to be declared before any get route with the same signature.
 // Otherwise, the head request will be accepted by the GET route. GET routes in Express accepts both GET and HEAD requests.
-router.head('/:id', userValidation.getById, routeValidation.checkErrors, userCtrl.getHeadById) 
+router.head('/:id', validateId, checkErrors, userCtrl.getHeadById) 
 
 // Returns a user by id
-router.get('/:id', userValidation.getById, routeValidation.checkErrors, userCtrl.getById) 
+router.get('/:id', validateId, checkErrors, userCtrl.getById) 
 
 // Creates a new user
-router.post('/', userValidation.addUser, routeValidation.checkErrors, userCtrl.add) 
+router.post('/', userCtrl.add) 
 
 // Updates a user
-router.put('/:id', userValidation.updateUser, routeValidation.checkErrors, userCtrl.checkUserById, userCtrl.update) 
+router.put('/:id', validateId, checkErrors, userCtrl.checkUserById, userCtrl.update) 
 
 // Sets a user as deleted
-router.delete('/:id', userValidation.deleteUser, routeValidation.checkErrors, userCtrl.checkUserById, userCtrl.delete) 
+router.delete('/:id', validateId, checkErrors, userCtrl.checkUserById, userCtrl.delete) 
 
 // Restores previously deleted user
-router.post('/:id/restore', userValidation.deleteUser, routeValidation.checkErrors, userCtrl.restore) 
+router.post('/:id/restore', validateId, checkErrors, userCtrl.restore) 
 
 module.exports = function (app) {
     app.use('/api/users', router) 
