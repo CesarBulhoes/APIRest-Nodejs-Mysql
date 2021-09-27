@@ -19,31 +19,34 @@ const options = {
 
 # Step 2
 
-Check "config/default.json" for setting the port number that the server will run on and the company owning the api, as showed below:
+Create a ".env" file, in root folder, for setting the port number that the server will run on and the company owning the api, as showed below:
 
-    {
-        "api": {
-            "port": 8888
-        },
-        "developed": {
-            "by": "Cesar Bulhoes"
-        }
-    }
+    # Server
+    API_PORT=[PORT]
+
+    # Developer
+    DEVELOPED_BY=[DEVELOPER NAME OR COMPANY]
+
+    # Authorization
+    AUTHORIZATION_SECRET=[YOUR SECRET]
+
+    # Database enviroment
+    NODE_ENV=[dev | prod]
+
+    # Database 
+    DB_USERNAME=root
+    DB_PASSWORD=admin
+    DB_DATABASE=tutorial
+    DB_HOST=127.0.0.1
+
+    # Database DEV
+    DB_USERNAME_DEV=root
+    DB_PASSWORD_DEV=admin
+    DB_DATABASE_DEV=tutorial
+    DB_HOST_DEV=127.0.0.1
 
 Tip: If port is not specified then it will try to run on port 443.
-
-Check "infrasctructure/database/config/database.json" and set your database configuration for Sequelize node module:
-
-    "development": {
-        "username": "root",
-        "password": "admin",
-        "database": "tutorial",
-        "host": "127.0.0.1",
-        "dialect": "mysql",
-        "logging": false
-    }
-
-Tip: If you want to run on another mode, you need to set NODE_ENV as "test" or "production" in environment variables.
+Tip²: If NODE_ENV is not specified then it will run in dev mode.
 
 #Step 3
 

@@ -1,7 +1,6 @@
 # MyList
 package-lock.json
-bin/cert.pem
-bin/privkey.pem
+*.pem
 assets/*
 
 # Logs
